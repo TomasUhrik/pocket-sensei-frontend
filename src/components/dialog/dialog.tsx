@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchCompletion } from "@/data-access"
+import { fetchCompletion, fetchCompletionJp } from "@/data-access"
 import styled from "@emotion/styled"
 import { Button, Skeleton, TextField } from "@mui/material"
 import { useCallback, useState } from "react"
@@ -33,14 +33,14 @@ const WrapperResult = styled.div`
 export const Dialog = () => {
     const [mode, setMode] = useState('EN-JP')
     const [query, setQuery] = useState('')
-    const [response, setResponse] = useState()
+    const [response, setResponse] = useState<{ text: string }>()
     const [isFetching, setIsFetching] = useState(false)
     const [error, setError] = useState(false)
 
     const handleFetchCompletion = useCallback(async () => {
         setIsFetching(true)
         setError(false)
-        const newResponse = await fetchCompletion(query)
+        const newResponse = mode === 'EN-JP' ? await fetchCompletion(query) : await fetchCompletionJp(query)
 
         if (!newResponse) {
             setError(true)
@@ -52,7 +52,7 @@ export const Dialog = () => {
 
         setResponse(newResponse)
         setIsFetching(false)
-    }, [query])
+    }, [query, mode])
 
     return (
         <Wrapper>
